@@ -343,6 +343,11 @@ export async function startServer() {
   });
 }
 
-if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
+const currentModulePath =
+  typeof import.meta.url === "string" && import.meta.url.startsWith("file:")
+    ? fileURLToPath(import.meta.url)
+    : null;
+
+if (process.argv[1] && currentModulePath === process.argv[1]) {
   startServer();
 }
