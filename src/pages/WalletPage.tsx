@@ -11,6 +11,7 @@ const STABLE_CHAIN_ID_DEC = 988;
 const STABLE_CHAIN_ID_HEX = "0x3dc";
 const AUTH_TOKEN_KEY = "voxelverseAuthToken";
 const WALLET_ADDRESS_KEY = "voxelverseWalletAddress";
+const CONNECT_STEP_TIMEOUT_MS = 25000;
 
 const STABLE_NETWORK_PARAMS = {
   chainId: STABLE_CHAIN_ID_HEX,
@@ -32,6 +33,21 @@ function getProvider(): Eip1193Provider | null {
 function shortAddress(address: string): string {
   if (address.length < 10) return address;
   return `${address.slice(0, 6)}...${address.slice(-4)}`;
+}
+
+async function withTimeout<T>(promise: Promise<T>, timeoutMs: number, message: string): Promise<T> {
+  let timeoutId: number | null = null;
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    timeoutId = window.setTimeout(() => reject(new Error(message)), timeoutMs);
+  });
+
+  try {
+    return await Promise.race([promise, timeoutPromise]);
+  } finally {
+    if (timeoutId !== null) {
+      window.clearTimeout(timeoutId);
+    }
+  }
 }
 
 export function WalletPage() {
@@ -126,24 +142,40 @@ export function WalletPage() {
     setWithdrawResult(null);
     setIsConnecting(true);
     try {
-      const currentChainUnknown = await provider.request({ method: "eth_chainId" });
+      const currentChainUnknown = await withTimeout(
+        provider.request({ method: "eth_chainId" }),
+        CONNECT_STEP_TIMEOUT_MS,
+        "Wallet request timed out while reading chain. Check your wallet popup and try again."
+      );
       const currentChain = typeof currentChainUnknown === "string" ? currentChainUnknown : null;
 
       if (currentChain !== STABLE_CHAIN_ID_HEX) {
         try {
-          await provider.request({
-            method: "wallet_switchEthereumChain",
-            params: [{ chainId: STABLE_CHAIN_ID_HEX }],
-          });
+          await withTimeout(
+            provider.request({
+              method: "wallet_switchEthereumChain",
+              params: [{ chainId: STABLE_CHAIN_ID_HEX }],
+            }),
+            CONNECT_STEP_TIMEOUT_MS,
+            "Timed out switching to Stable Mainnet. Approve the network prompt in your wallet."
+          );
         } catch {
-          await provider.request({
-            method: "wallet_addEthereumChain",
-            params: [STABLE_NETWORK_PARAMS],
-          });
+          await withTimeout(
+            provider.request({
+              method: "wallet_addEthereumChain",
+              params: [STABLE_NETWORK_PARAMS],
+            }),
+            CONNECT_STEP_TIMEOUT_MS,
+            "Timed out adding Stable Mainnet. Approve the network prompt in your wallet."
+          );
         }
       }
 
-      const accountsUnknown = await provider.request({ method: "eth_requestAccounts" });
+      const accountsUnknown = await withTimeout(
+        provider.request({ method: "eth_requestAccounts" }),
+        CONNECT_STEP_TIMEOUT_MS,
+        "Wallet account request timed out. Open your wallet and approve account access."
+      );
       const accounts = Array.isArray(accountsUnknown)
         ? accountsUnknown.filter((value): value is string => typeof value === "string")
         : [];
@@ -154,15 +186,27 @@ export function WalletPage() {
       }
       setWalletAddress(selected);
 
-      const activeChainUnknown = await provider.request({ method: "eth_chainId" });
+      const activeChainUnknown = await withTimeout(
+        provider.request({ method: "eth_chainId" }),
+        CONNECT_STEP_TIMEOUT_MS,
+        "Timed out while confirming active network."
+      );
       const activeChain = typeof activeChainUnknown === "string" ? activeChainUnknown : null;
       setChainIdHex(activeChain);
 
-      const nonceResponse = await fetch("/api/auth/nonce", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ address: selected }),
-      });
+      const nonceController = new AbortController();
+      const nonceTimeout = window.setTimeout(() => nonceController.abort(), CONNECT_STEP_TIMEOUT_MS);
+      let nonceResponse: Response;
+      try {
+        nonceResponse = await fetch("/api/auth/nonce", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ address: selected }),
+          signal: nonceController.signal,
+        });
+      } finally {
+        window.clearTimeout(nonceTimeout);
+      }
       const noncePayload = await readJsonSafe<{ error?: string; message?: string }>(nonceResponse);
       if (!nonceResponse.ok) {
         throw new Error(noncePayload.error ?? "Failed to request login nonce.");
@@ -171,23 +215,39 @@ export function WalletPage() {
 
       let signatureUnknown: unknown;
       try {
-        signatureUnknown = await provider.request({
-          method: "personal_sign",
-          params: [noncePayload.message, selected],
-        });
+        signatureUnknown = await withTimeout(
+          provider.request({
+            method: "personal_sign",
+            params: [noncePayload.message, selected],
+          }),
+          CONNECT_STEP_TIMEOUT_MS,
+          "Wallet signature request timed out. Approve the signature prompt to continue."
+        );
       } catch {
-        signatureUnknown = await provider.request({
-          method: "personal_sign",
-          params: [selected, noncePayload.message],
-        });
+        signatureUnknown = await withTimeout(
+          provider.request({
+            method: "personal_sign",
+            params: [selected, noncePayload.message],
+          }),
+          CONNECT_STEP_TIMEOUT_MS,
+          "Wallet signature request timed out. Approve the signature prompt to continue."
+        );
       }
       if (typeof signatureUnknown !== "string") throw new Error("Wallet signature failed.");
 
-      const verifyResponse = await fetch("/api/auth/verify", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ address: selected, signature: signatureUnknown }),
-      });
+      const verifyController = new AbortController();
+      const verifyTimeout = window.setTimeout(() => verifyController.abort(), CONNECT_STEP_TIMEOUT_MS);
+      let verifyResponse: Response;
+      try {
+        verifyResponse = await fetch("/api/auth/verify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ address: selected, signature: signatureUnknown }),
+          signal: verifyController.signal,
+        });
+      } finally {
+        window.clearTimeout(verifyTimeout);
+      }
       const verifyPayload = await readJsonSafe<{
         error?: string;
         token?: string;
@@ -211,7 +271,9 @@ export function WalletPage() {
         err instanceof Error ? err.message : "Could not connect wallet to Stable Mainnet.";
       const message =
         rawMessage.toLowerCase().includes("failed to fetch")
-          ? "Backend API is offline. Start it with: npm run server"
+          ? "Backend API is unreachable. Check your production function/env configuration."
+          : rawMessage.toLowerCase().includes("aborted")
+            ? "Connection timed out. Open your wallet prompt, then try connecting again."
           : rawMessage;
       setErrorMessage(message);
     } finally {
