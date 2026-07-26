@@ -1,0 +1,6 @@
+{
+  "name": "VoxelVerse: Cozy Isometric MMORPG",
+  "description": "A browser-based 3D isometric voxel MMORPG & Minecraft clone featuring real-time block building, procedural terrain, cozy pixel-art village quests, and simulated social multiplayer.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
