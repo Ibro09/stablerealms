@@ -1,5 +1,5 @@
 import serverless from "serverless-http";
-import { createApiApp } from "../server.js";
+import { createApiApp } from "../../server.js";
 
 let cachedHandler: ((event: any, context: any) => Promise<any>) | null = null;
 
