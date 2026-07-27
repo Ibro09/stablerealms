@@ -157,6 +157,7 @@ export const VoxelCanvas: React.FC<VoxelCanvasProps> = ({
   const cameraZoomRef = useRef(cameraZoom);
   const isGameOverRef = useRef(false);
   const lastSliceTimeRef = useRef(0);
+  const facingDirRef = useRef<{ x: number; z: number }>({ x: 0, z: 1 });
 
   useEffect(() => {
     gameModeRef.current = gameMode;
@@ -332,7 +333,7 @@ export const VoxelCanvas: React.FC<VoxelCanvasProps> = ({
     slashMesh.position.copy(playerPos);
     slashMesh.position.y += 1.3;
     slashMesh.rotation.x = Math.PI / 2;
-    slashMesh.rotation.z = playerGroupRef.current.rotation.y;
+    slashMesh.rotation.z = Math.atan2(facing.x, facing.z);
     sceneRef.current.add(slashMesh);
 
     // Always clean up THIS slash after 200ms
@@ -355,6 +356,8 @@ export const VoxelCanvas: React.FC<VoxelCanvasProps> = ({
     }
 
     // Check hit on all active monsters within slash reach (distance < 4.5)
+    // Only hit enemies in the forward 120° arc (dot product > cos(60°) = 0.5)
+    const facing = facingDirRef.current;
     let killedCount = 0;
     let expGained = 0;
     const toRemove: string[] = [];
@@ -365,6 +368,13 @@ export const VoxelCanvas: React.FC<VoxelCanvasProps> = ({
       const dist = Math.sqrt(dx * dx + dz * dz);
 
       if (dist <= 4.5) {
+        // Dot product between facing dir and direction-to-enemy (normalised)
+        const dot = dist > 0.01
+          ? (facing.x * (dx / dist) + facing.z * (dz / dist))
+          : 1; // treat point-blank as always in front
+
+        // cos(60°) = 0.5 → 120° total arc in front
+        if (dot < 0.5) return;
         // Monster is sliced!
         m.hp -= 45;
         m.hitTimer = 0.15; // flash white/red for 150ms
@@ -917,6 +927,7 @@ export const VoxelCanvas: React.FC<VoxelCanvasProps> = ({
 
           // Rotate character model to face direction of movement
           playerGroupRef.current.rotation.y = Math.atan2(normX, normZ);
+          facingDirRef.current = { x: normX, z: normZ };
 
           // Animate arms & legs swinging like Minecraft
           const leftLeg = playerGroupRef.current.getObjectByName("leftLeg");
@@ -1057,7 +1068,7 @@ export const VoxelCanvas: React.FC<VoxelCanvasProps> = ({
           let mType: MonsterType = "zombie";
           let mName = "Zombie Walker 🧟";
           let mHp = 100;
-          let mSpeed = 1.4;
+          let mSpeed = 2.4;
           let mDamage = 12;
           let mGold = 35;
           let isElite = false;
@@ -1066,35 +1077,35 @@ export const VoxelCanvas: React.FC<VoxelCanvasProps> = ({
             mType = "wolf";
             mName = "Dire Wolf 🐺";
             mHp = 55;
-            mSpeed = 2.1;
+            mSpeed = 3.2;
             mDamage = 8;
             mGold = 20;
           } else if (roll < 0.55) {
             mType = "goblin";
             mName = "Goblin Raider 👺";
             mHp = 75;
-            mSpeed = 1.8;
+            mSpeed = 2.8;
             mDamage = 10;
             mGold = 30;
           } else if (roll < 0.78) {
             mType = "zombie";
             mName = "Zombie Walker 🧟";
             mHp = 100;
-            mSpeed = 1.4;
+            mSpeed = 2.4;
             mDamage = 12;
             mGold = 35;
           } else if (roll < 0.92) {
             mType = "bear";
             mName = "Grizzly Bear 🐻";
             mHp = 180;
-            mSpeed = 1.1;
+            mSpeed = 2.0;
             mDamage = 20;
             mGold = 70;
           } else {
             mType = "elite";
             mName = "Elite Boss Warlord 👑";
             mHp = 320;
-            mSpeed = 1.3;
+            mSpeed = 2.2;
             mDamage = 25;
             mGold = 150;
             isElite = true;
@@ -1802,7 +1813,7 @@ export const VoxelCanvas: React.FC<VoxelCanvasProps> = ({
 
       {/* Top Center Character Livebar in Fighting Mode */}
       {gameMode === "fighting" && (
-        <div className="absolute top-14 sm:top-4 left-1/2 transform -translate-x-1/2 z-30 flex items-center gap-3 sm:gap-4 bg-slate-900/95 backdrop-blur-md px-3 sm:px-6 py-2 sm:py-3 rounded-2xl border-2 border-red-500/80 shadow-2xl animate-fade-in max-w-[90vw]">
+        <div className="absolute top-14 sm:top-[100px] left-1/2 transform -translate-x-1/2 z-30 flex items-center gap-3 sm:gap-4 bg-slate-900/95 backdrop-blur-md px-3 sm:px-6 py-2 sm:py-3 rounded-2xl border-2 border-red-500/80 shadow-2xl animate-fade-in max-w-[90vw]">
           <div className="flex items-center gap-2.5">
             <span
               className={`text-2xl ${playerHp <= 30 ? "animate-bounce text-red-500" : "animate-pulse"}`}
