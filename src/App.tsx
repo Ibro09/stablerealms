@@ -378,13 +378,6 @@ function GamePage() {
         <Hero
           onPlay={() => {
             setIsStartingGame(true);
-            if (!canPlayOnThisScreen) {
-              window.alert(
-                "STABLEREALMS can only be played on a tablet or laptop. Please use a larger screen.",
-              );
-              setIsStartingGame(false);
-              return;
-            }
             const token = localStorage.getItem(AUTH_TOKEN_KEY);
             const walletAddress = localStorage.getItem(WALLET_ADDRESS_KEY);
             if (!token || !walletAddress) {
@@ -490,9 +483,9 @@ function GamePage() {
             </div>
           )}
 
-          {/* Top Left Bar: Title & Game Mode Toggle */}
-          <div className="absolute top-16 right-4 z-20 flex flex-wrap items-center gap-3 bg-slate-900/90 backdrop-blur-md px-4 py-2 rounded-2xl border-2 border-slate-700/80 shadow-xl">
-            <div className="flex items-center gap-2 pr-2 border-r border-slate-700/80">
+          {/* Title & Game Mode Toggle */}
+          <div className="absolute top-14 sm:top-16 right-2 sm:right-4 z-20 flex items-center gap-2 sm:gap-3 bg-slate-900/90 backdrop-blur-md px-2 sm:px-4 py-1.5 sm:py-2 rounded-2xl border-2 border-slate-700/80 shadow-xl">
+            <div className="hidden sm:flex items-center gap-2 pr-2 border-r border-slate-700/80">
               <span className="text-xl">🌿</span>
               <div>
                 <h1 className="text-xs font-black text-white tracking-wide">
@@ -508,23 +501,25 @@ function GamePage() {
             <div className="flex items-center bg-slate-950 p-1 rounded-xl border border-slate-700 shadow-inner">
               <button
                 onClick={() => setGameMode("survival")}
-                className={`px-3 py-1 rounded-lg font-black text-xs transition-all flex items-center gap-1 ${
+                className={`px-2 sm:px-3 py-1 rounded-lg font-black text-xs transition-all flex items-center gap-1 ${
                   gameMode === "survival"
                     ? "bg-emerald-500 text-slate-950 shadow-md"
                     : "text-slate-300 hover:text-white hover:bg-slate-800"
                 }`}
               >
-                <span>🌿</span> Survival
+                <span>🌿</span>
+                <span className="hidden sm:inline">Survival</span>
               </button>
               <button
                 onClick={() => setGameMode("fighting")}
-                className={`px-3 py-1 rounded-lg font-black text-xs transition-all flex items-center gap-1 ${
+                className={`px-2 sm:px-3 py-1 rounded-lg font-black text-xs transition-all flex items-center gap-1 ${
                   gameMode === "fighting"
                     ? "bg-red-600 text-white shadow-md animate-pulse"
                     : "text-slate-300 hover:text-white hover:bg-slate-800"
                 }`}
               >
-                <span>⚔️</span> Fighting
+                <span>⚔️</span>
+                <span className="hidden sm:inline">Fighting</span>
               </button>
             </div>
           </div>

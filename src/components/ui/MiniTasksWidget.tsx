@@ -15,10 +15,12 @@ interface MiniTasksWidgetProps {
 }
 
 export const MiniTasksWidget: React.FC<MiniTasksWidgetProps> = ({ tasks, onCompleteTask }) => {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(
+    () => typeof window !== "undefined" && window.innerWidth < 640
+  );
 
   return (
-    <div className="fixed top-30 left-3 z-30 flex flex-col gap-2 font-sans select-none animate-fade-in">
+    <div className="fixed top-16 sm:top-30 right-2 sm:right-auto sm:left-3 z-30 flex flex-col gap-2 font-sans select-none animate-fade-in max-w-[min(92vw,20rem)]">
       {/* Widget Header Toggle */}
       <div
         onClick={() => setIsCollapsed(!isCollapsed)}

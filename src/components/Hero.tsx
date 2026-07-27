@@ -38,8 +38,7 @@ export default function Hero({
             </p>
 
             <div className="mt-6 inline-flex max-w-xl rounded-2xl border border-amber-300/30 bg-black/35 px-4 py-3 text-sm text-amber-100/95 backdrop-blur-md sm:mt-8 sm:text-base">
-              Best experienced on a big screen. Small screens can browse the
-              website, but gameplay is locked.
+              Best experienced on a big screen. On mobile, use the on-screen D-pad to move.
             </div>
 
             {/* Buttons */}

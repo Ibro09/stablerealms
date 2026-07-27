@@ -117,6 +117,10 @@ export const VoxelCanvas: React.FC<VoxelCanvasProps> = ({
   const cameraRef = useRef<THREE.OrthographicCamera | null>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
 
+  const [isTouchDevice] = useState(
+    () => typeof window !== "undefined" && ("ontouchstart" in window || navigator.maxTouchPoints > 0)
+  );
+
   const [locationToast, setLocationToast] = useState<string | null>(null);
   const visitedLandmarksRef = useRef<Set<string>>(new Set());
   const onDiscoverLocationRef = useRef(onDiscoverLocation);
@@ -828,7 +832,7 @@ export const VoxelCanvas: React.FC<VoxelCanvasProps> = ({
         }
 
         const isMoving = moveX !== 0 || moveZ !== 0;
-        const speed = 12.0; // Much faster traversal while staying frame-rate independent
+        const speed = 40.0; // Fast traversal while staying frame-rate independent
 
         if (isMoving) {
           const length = Math.sqrt(moveX * moveX + moveZ * moveZ);
@@ -1798,7 +1802,7 @@ export const VoxelCanvas: React.FC<VoxelCanvasProps> = ({
 
       {/* Top Center Character Livebar in Fighting Mode */}
       {gameMode === "fighting" && (
-        <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-30 flex items-center gap-4 bg-slate-900/95 backdrop-blur-md px-6 py-3 rounded-2xl border-2 border-red-500/80 shadow-2xl animate-fade-in">
+        <div className="absolute top-14 sm:top-4 left-1/2 transform -translate-x-1/2 z-30 flex items-center gap-3 sm:gap-4 bg-slate-900/95 backdrop-blur-md px-3 sm:px-6 py-2 sm:py-3 rounded-2xl border-2 border-red-500/80 shadow-2xl animate-fade-in max-w-[90vw]">
           <div className="flex items-center gap-2.5">
             <span
               className={`text-2xl ${playerHp <= 30 ? "animate-bounce text-red-500" : "animate-pulse"}`}
@@ -1818,7 +1822,7 @@ export const VoxelCanvas: React.FC<VoxelCanvasProps> = ({
                   {playerHp} / {maxPlayerHp} HP
                 </span>
               </div>
-              <div className="w-48 sm:w-64 h-3.5 bg-slate-950 rounded-full overflow-hidden border border-slate-700 shadow-inner">
+              <div className="w-36 sm:w-48 md:w-64 h-3.5 bg-slate-950 rounded-full overflow-hidden border border-slate-700 shadow-inner">
                 <div
                   className={`h-full transition-all duration-200 ${
                     playerHp > 50
@@ -1903,8 +1907,8 @@ export const VoxelCanvas: React.FC<VoxelCanvasProps> = ({
           </div>
         ))}
 
-      {/* Bottom-Left Real-time Context Action Guide Widget */}
-      <div className="absolute bottom-5 left-5 z-30 pointer-events-auto flex items-center gap-3 bg-slate-900/95 backdrop-blur-md p-3 rounded-2xl border-2 border-amber-500/80 shadow-2xl animate-fade-in max-w-xs sm:max-w-sm">
+      {/* Bottom-Left Real-time Context Action Guide Widget — hidden on mobile (D-pad is there) */}
+      <div className="absolute bottom-5 left-5 z-30 pointer-events-auto hidden sm:flex items-center gap-3 bg-slate-900/95 backdrop-blur-md p-3 rounded-2xl border-2 border-amber-500/80 shadow-2xl animate-fade-in max-w-xs sm:max-w-sm">
         <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-2xl shadow-md border border-white shrink-0">
           {contextGuide.icon}
         </div>
@@ -1952,6 +1956,72 @@ export const VoxelCanvas: React.FC<VoxelCanvasProps> = ({
           Out
         </div>
       </div>
+
+      {/* Mobile Virtual D-Pad */}
+      {isTouchDevice && (
+        <div
+          className="absolute bottom-24 left-4 z-40 select-none"
+          style={{ touchAction: "none" }}
+        >
+          {/* Up */}
+          <div className="flex justify-center mb-1">
+            <button
+              onTouchStart={(e) => { e.preventDefault(); keysPressedRef.current.add("w"); }}
+              onTouchEnd={(e) => { e.preventDefault(); keysPressedRef.current.delete("w"); }}
+              onTouchCancel={() => keysPressedRef.current.delete("w")}
+              className="w-13 h-13 w-12 h-12 rounded-xl bg-slate-800/90 border-2 border-slate-600 text-white text-lg font-black flex items-center justify-center active:bg-amber-500 active:border-amber-400 shadow-xl"
+            >▲</button>
+          </div>
+          {/* Middle row */}
+          <div className="flex gap-1 justify-center">
+            <button
+              onTouchStart={(e) => { e.preventDefault(); keysPressedRef.current.add("a"); }}
+              onTouchEnd={(e) => { e.preventDefault(); keysPressedRef.current.delete("a"); }}
+              onTouchCancel={() => keysPressedRef.current.delete("a")}
+              className="w-12 h-12 rounded-xl bg-slate-800/90 border-2 border-slate-600 text-white text-lg font-black flex items-center justify-center active:bg-amber-500 active:border-amber-400 shadow-xl"
+            >◀</button>
+            <button
+              onTouchStart={(e) => { e.preventDefault(); keysPressedRef.current.add("s"); }}
+              onTouchEnd={(e) => { e.preventDefault(); keysPressedRef.current.delete("s"); }}
+              onTouchCancel={() => keysPressedRef.current.delete("s")}
+              className="w-12 h-12 rounded-xl bg-slate-800/90 border-2 border-slate-600 text-white text-lg font-black flex items-center justify-center active:bg-amber-500 active:border-amber-400 shadow-xl"
+            >▼</button>
+            <button
+              onTouchStart={(e) => { e.preventDefault(); keysPressedRef.current.add("d"); }}
+              onTouchEnd={(e) => { e.preventDefault(); keysPressedRef.current.delete("d"); }}
+              onTouchCancel={() => keysPressedRef.current.delete("d")}
+              className="w-12 h-12 rounded-xl bg-slate-800/90 border-2 border-slate-600 text-white text-lg font-black flex items-center justify-center active:bg-amber-500 active:border-amber-400 shadow-xl"
+            >▶</button>
+          </div>
+        </div>
+      )}
+
+      {/* Mobile Talk Button (survival) */}
+      {isTouchDevice && gameMode === "survival" && (
+        <div
+          className="absolute bottom-24 right-4 z-40"
+          style={{ touchAction: "none" }}
+        >
+          <button
+            onTouchStart={(e) => {
+              e.preventDefault();
+              if (!playerGroupRef.current) return;
+              const pX = playerGroupRef.current.position.x;
+              const pZ = playerGroupRef.current.position.z;
+              const nearbyNpc = npcsRef.current.find(
+                (n) => Math.sqrt((pX - n.x) ** 2 + (pZ - n.z) ** 2) <= 4.5
+              );
+              if (nearbyNpc && onNpcClickRef.current) {
+                onNpcClickRef.current(nearbyNpc);
+              }
+            }}
+            className="w-14 h-14 rounded-2xl bg-amber-500/90 border-2 border-amber-300 text-slate-950 text-xs font-black flex flex-col items-center justify-center shadow-xl active:scale-95"
+          >
+            <span className="text-xl">💬</span>
+            <span>TALK</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 };
