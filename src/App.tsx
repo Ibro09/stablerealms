@@ -419,7 +419,6 @@ function GamePage() {
               headStyle: "guard",
               outfitColor: "#1e293b",
             }}
-            quests={[]}
             timeOfDay={timeOfDay}
             onToggleTimeOfDay={() =>
               setTimeOfDay((prev) =>
@@ -439,6 +438,9 @@ function GamePage() {
             }
             onOpenCustomizer={() => {}}
             onOpenWagonScene={() => {}}
+            gameMode={gameMode}
+            onSetSurvival={() => setGameMode("survival")}
+            onSetFighting={() => setGameMode("fighting")}
           />
 
           {/* Three.js Isometric Voxel Canvas */}
@@ -482,47 +484,6 @@ function GamePage() {
               <span>{miniTaskToast}</span>
             </div>
           )}
-
-          {/* Title & Game Mode Toggle */}
-          <div className="absolute top-20 sm:top-16 right-2 sm:right-4 z-20 flex items-center gap-2 sm:gap-3 bg-slate-900/90 backdrop-blur-md px-2 sm:px-4 py-1.5 sm:py-2 rounded-2xl border-2 border-slate-700/80 shadow-xl">
-            <div className="hidden sm:flex items-center gap-2 pr-2 border-r border-slate-700/80">
-              <span className="text-xl">🌿</span>
-              <div>
-                <h1 className="text-xs font-black text-white tracking-wide">
-                  Voxelverse RPG
-                </h1>
-                <p className="text-[10px] font-semibold text-amber-400">
-                  WASD to walk & explore
-                </p>
-              </div>
-            </div>
-
-            {/* Game Mode Selector */}
-            <div className="flex items-center bg-slate-950 p-1 rounded-xl border border-slate-700 shadow-inner">
-              <button
-                onClick={() => setGameMode("survival")}
-                className={`px-2 sm:px-3 py-1 rounded-lg font-black text-xs transition-all flex items-center gap-1 ${
-                  gameMode === "survival"
-                    ? "bg-emerald-500 text-slate-950 shadow-md"
-                    : "text-slate-300 hover:text-white hover:bg-slate-800"
-                }`}
-              >
-                <span>🌿</span>
-                <span className="hidden sm:inline">Survival</span>
-              </button>
-              <button
-                onClick={() => setGameMode("fighting")}
-                className={`px-2 sm:px-3 py-1 rounded-lg font-black text-xs transition-all flex items-center gap-1 ${
-                  gameMode === "fighting"
-                    ? "bg-red-600 text-white shadow-md animate-pulse"
-                    : "text-slate-300 hover:text-white hover:bg-slate-800"
-                }`}
-              >
-                <span>⚔️</span>
-                <span className="hidden sm:inline">Fighting</span>
-              </button>
-            </div>
-          </div>
 
           {/* Active Everyday Activity Modal */}
           {activeNpcModal && (

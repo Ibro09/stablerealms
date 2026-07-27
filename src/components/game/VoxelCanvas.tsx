@@ -1859,7 +1859,7 @@ export const VoxelCanvas: React.FC<VoxelCanvasProps> = ({
 
       {/* Bottom Center Interactive Slice Button in Fighting Mode */}
       {gameMode === "fighting" && (
-        <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-30 flex flex-col items-center gap-2 animate-fade-in">
+        <div className="absolute bottom-20 sm:bottom-6 left-1/2 transform -translate-x-1/2 z-30 flex flex-col items-center gap-2 animate-fade-in">
           <button
             onClick={sliceZombies}
             className={`px-8 py-3.5 rounded-2xl font-black text-base transition-all flex items-center gap-3 border-2 shadow-2xl ${
@@ -1960,19 +1960,17 @@ export const VoxelCanvas: React.FC<VoxelCanvasProps> = ({
       {/* Mobile Virtual D-Pad */}
       {isTouchDevice && (
         <div
-          className="absolute bottom-24 left-4 z-40 select-none"
+          className="absolute bottom-4 left-2 z-40 select-none"
           style={{ touchAction: "none" }}
         >
-          {/* Up */}
           <div className="flex justify-center mb-1">
             <button
               onTouchStart={(e) => { e.preventDefault(); keysPressedRef.current.add("w"); }}
               onTouchEnd={(e) => { e.preventDefault(); keysPressedRef.current.delete("w"); }}
               onTouchCancel={() => keysPressedRef.current.delete("w")}
-              className="w-13 h-13 w-12 h-12 rounded-xl bg-slate-800/90 border-2 border-slate-600 text-white text-lg font-black flex items-center justify-center active:bg-amber-500 active:border-amber-400 shadow-xl"
+              className="w-12 h-12 rounded-xl bg-slate-800/90 border-2 border-slate-600 text-white text-lg font-black flex items-center justify-center active:bg-amber-500 active:border-amber-400 shadow-xl"
             >▲</button>
           </div>
-          {/* Middle row */}
           <div className="flex gap-1 justify-center">
             <button
               onTouchStart={(e) => { e.preventDefault(); keysPressedRef.current.add("a"); }}
@@ -1999,7 +1997,7 @@ export const VoxelCanvas: React.FC<VoxelCanvasProps> = ({
       {/* Mobile Talk Button (survival) */}
       {isTouchDevice && gameMode === "survival" && (
         <div
-          className="absolute bottom-24 right-4 z-40"
+          className="absolute bottom-4 right-2 z-40"
           style={{ touchAction: "none" }}
         >
           <button
