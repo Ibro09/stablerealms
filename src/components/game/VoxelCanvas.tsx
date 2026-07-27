@@ -118,7 +118,9 @@ export const VoxelCanvas: React.FC<VoxelCanvasProps> = ({
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
 
   const [isTouchDevice] = useState(
-    () => typeof window !== "undefined" && ("ontouchstart" in window || navigator.maxTouchPoints > 0)
+    () =>
+      typeof window !== "undefined" &&
+      ("ontouchstart" in window || navigator.maxTouchPoints > 0),
   );
 
   const [locationToast, setLocationToast] = useState<string | null>(null);
@@ -194,7 +196,9 @@ export const VoxelCanvas: React.FC<VoxelCanvasProps> = ({
   const [isSlicing, setIsSlicing] = useState<boolean>(false);
   const [isGameOver, setIsGameOver] = useState<boolean>(false);
   // keep a ref in sync so animation-loop closures always read current value
-  useEffect(() => { isGameOverRef.current = isGameOver; }, [isGameOver]);
+  useEffect(() => {
+    isGameOverRef.current = isGameOver;
+  }, [isGameOver]);
 
   // Bottom-Left Context Action Guide State
   const [contextGuide, setContextGuide] = useState<{
@@ -333,7 +337,7 @@ export const VoxelCanvas: React.FC<VoxelCanvasProps> = ({
     slashMesh.position.copy(playerPos);
     slashMesh.position.y += 1.3;
     slashMesh.rotation.x = Math.PI / 2;
-    slashMesh.rotation.z = Math.atan2(facing.x, facing.z);
+    slashMesh.rotation.z = Math.atan2(facingDirRef.current.x, facingDirRef.current.z);
     sceneRef.current.add(slashMesh);
 
     // Always clean up THIS slash after 200ms
@@ -369,9 +373,8 @@ export const VoxelCanvas: React.FC<VoxelCanvasProps> = ({
 
       if (dist <= 4.5) {
         // Dot product between facing dir and direction-to-enemy (normalised)
-        const dot = dist > 0.01
-          ? (facing.x * (dx / dist) + facing.z * (dz / dist))
-          : 1; // treat point-blank as always in front
+        const dot =
+          dist > 0.01 ? facing.x * (dx / dist) + facing.z * (dz / dist) : 1; // treat point-blank as always in front
 
         // cos(60°) = 0.5 → 120° total arc in front
         if (dot < 0.5) return;
@@ -527,9 +530,10 @@ export const VoxelCanvas: React.FC<VoxelCanvasProps> = ({
         color: def.color,
         // Keep the pixel edge treatment for crafted objects, but let the landscape
         // read as one continuous field instead of a grid of outlined cubes.
-        map: def.category === "building" || def.category === "decoration"
-          ? getUniversalBoxGridTexture()
-          : null,
+        map:
+          def.category === "building" || def.category === "decoration"
+            ? getUniversalBoxGridTexture()
+            : null,
         flatShading: true,
         transparent: def.transparent || false,
         opacity: def.transparent ? 0.85 : 1.0,
@@ -611,12 +615,12 @@ export const VoxelCanvas: React.FC<VoxelCanvasProps> = ({
       const key = e.key.toLowerCase();
       keysPressedRef.current.add(key);
 
-      if (key === 'e' && gameModeRef.current === 'survival') {
+      if (key === "e" && gameModeRef.current === "survival") {
         if (playerGroupRef.current) {
           const pX = playerGroupRef.current.position.x;
           const pZ = playerGroupRef.current.position.z;
           const nearbyNpc = npcsRef.current.find(
-            (n) => Math.sqrt((pX - n.x) ** 2 + (pZ - n.z) ** 2) <= 4.5
+            (n) => Math.sqrt((pX - n.x) ** 2 + (pZ - n.z) ** 2) <= 4.5,
           );
           if (nearbyNpc && onNpcClickRef.current) {
             onNpcClickRef.current(nearbyNpc);
@@ -719,7 +723,10 @@ export const VoxelCanvas: React.FC<VoxelCanvasProps> = ({
       color: 0x2f6b1f,
       depthWrite: false,
     });
-    const fullscreenBackdrop = new THREE.Mesh(backdropGeometry, backdropMaterial);
+    const fullscreenBackdrop = new THREE.Mesh(
+      backdropGeometry,
+      backdropMaterial,
+    );
     fullscreenBackdrop.rotation.x = -Math.PI / 2;
     fullscreenBackdrop.position.y = -1.5;
     scene.add(fullscreenBackdrop);
@@ -901,14 +908,39 @@ export const VoxelCanvas: React.FC<VoxelCanvasProps> = ({
             { id: "village_pond", name: "Village Lily Pond", x: -18, z: 18 },
             { id: "fishing_lake", name: "Fishing Lake 🎣", x: -130, z: 120 },
             { id: "cow_farm", name: "Pastoral Cow Farm 🐄", x: 120, z: 120 },
-            { id: "carnival_fair", name: "Carnival Fairground 🎪", x: 140, z: -120 },
-            { id: "mine_entrance", name: "Cavern Mine Entrance ⛏️", x: -150, z: -150 },
+            {
+              id: "carnival_fair",
+              name: "Carnival Fairground 🎪",
+              x: 140,
+              z: -120,
+            },
+            {
+              id: "mine_entrance",
+              name: "Cavern Mine Entrance ⛏️",
+              x: -150,
+              z: -150,
+            },
             { id: "village_bakery", name: "Village Bakery 🍞", x: 160, z: 140 },
             { id: "horse_stable", name: "Horse Stables 🐎", x: 100, z: -100 },
-            { id: "blacksmith_forge", name: "Blacksmith Forge ⚒️", x: -100, z: -100 },
-            { id: "crystal_tower", name: "Wizard Crystal Tower 🧙", x: 200, z: 200 },
+            {
+              id: "blacksmith_forge",
+              name: "Blacksmith Forge ⚒️",
+              x: -100,
+              z: -100,
+            },
+            {
+              id: "crystal_tower",
+              name: "Wizard Crystal Tower 🧙",
+              x: 200,
+              z: 200,
+            },
             { id: "wolf_den", name: "Wolf Den Clearing 🐺", x: 220, z: -210 },
-            { id: "bear_cave", name: "Bear Cave Sanctuary 🐻", x: -220, z: -220 },
+            {
+              id: "bear_cave",
+              name: "Bear Cave Sanctuary 🐻",
+              x: -220,
+              z: -220,
+            },
           ];
 
           landmarks.forEach((loc) => {
@@ -1497,19 +1529,45 @@ export const VoxelCanvas: React.FC<VoxelCanvasProps> = ({
               ) {
                 let icon = "💬";
                 let label = npc.name;
-                if (npc.id === "npc-farmer") { icon = "👨‍🌾"; label = "Cow Farm & Wheat"; }
-                else if (npc.id === "npc-finn") { icon = "🎣"; label = "Fishing Lake"; }
-                else if (npc.id === "npc-chef") { icon = "👩‍🍳"; label = "Restaurant & Bakery"; }
-                else if (npc.id === "npc-cole") { icon = "⚒️"; label = "Blacksmith Forge"; }
-                else if (npc.id === "npc-wizard") { icon = "🧙"; label = "Crystal Cavern"; }
-                else if (npc.id === "npc-elder") { icon = "🧓"; label = "Town Square"; }
-                else if (npc.id === "npc-guard") { icon = "👮"; label = "Patrol Guard"; }
-                else if (npc.id === "npc-merchant") { icon = "🛒"; label = "General Store & Fair"; }
-                else if (npc.id === "npc-ruby") { icon = "💎"; label = "Jeweller Shop"; }
-                else if (npc.id === "npc-stable") { icon = "🐎"; label = "Horse Stable"; }
-                else if (npc.id === "npc-explorer") { icon = "⛏️"; label = "Mine Entrance"; }
-                else if (npc.id === "npc-delivery") { icon = "📦"; label = "Post Office & Bank"; }
-                else if (npc.statusBubble) { label = npc.statusBubble; }
+                if (npc.id === "npc-farmer") {
+                  icon = "👨‍🌾";
+                  label = "Cow Farm & Wheat";
+                } else if (npc.id === "npc-finn") {
+                  icon = "🎣";
+                  label = "Fishing Lake";
+                } else if (npc.id === "npc-chef") {
+                  icon = "👩‍🍳";
+                  label = "Restaurant & Bakery";
+                } else if (npc.id === "npc-cole") {
+                  icon = "⚒️";
+                  label = "Blacksmith Forge";
+                } else if (npc.id === "npc-wizard") {
+                  icon = "🧙";
+                  label = "Crystal Cavern";
+                } else if (npc.id === "npc-elder") {
+                  icon = "🧓";
+                  label = "Town Square";
+                } else if (npc.id === "npc-guard") {
+                  icon = "👮";
+                  label = "Patrol Guard";
+                } else if (npc.id === "npc-merchant") {
+                  icon = "🛒";
+                  label = "General Store & Fair";
+                } else if (npc.id === "npc-ruby") {
+                  icon = "💎";
+                  label = "Jeweller Shop";
+                } else if (npc.id === "npc-stable") {
+                  icon = "🐎";
+                  label = "Horse Stable";
+                } else if (npc.id === "npc-explorer") {
+                  icon = "⛏️";
+                  label = "Mine Entrance";
+                } else if (npc.id === "npc-delivery") {
+                  icon = "📦";
+                  label = "Post Office & Bank";
+                } else if (npc.statusBubble) {
+                  label = npc.statusBubble;
+                }
 
                 tags.push({
                   id: npc.id,
@@ -1555,7 +1613,8 @@ export const VoxelCanvas: React.FC<VoxelCanvasProps> = ({
                   const blockType = world.blocks.get(
                     `${worldX},${worldY},${worldZ}`,
                   );
-                  if (!blockType || !NOTABLE_OUTDOOR_LABELS.has(blockType)) continue;
+                  if (!blockType || !NOTABLE_OUTDOOR_LABELS.has(blockType))
+                    continue;
 
                   const blockDef = BLOCK_DEFINITIONS[blockType as BlockType];
                   if (!blockDef) continue;
@@ -1813,7 +1872,7 @@ export const VoxelCanvas: React.FC<VoxelCanvasProps> = ({
 
       {/* Top Center Character Livebar in Fighting Mode */}
       {gameMode === "fighting" && (
-        <div className="absolute top-14 sm:top-[100px] left-1/2 transform -translate-x-1/2 z-30 flex items-center gap-3 sm:gap-4 bg-slate-900/95 backdrop-blur-md px-3 sm:px-6 py-2 sm:py-3 rounded-2xl border-2 border-red-500/80 shadow-2xl animate-fade-in max-w-[90vw]">
+        <div className="absolute top-[150px] sm:top-14 left-1/2 transform -translate-x-1/2 z-30 flex items-center gap-3 sm:gap-4 bg-slate-900/95 backdrop-blur-md px-3 sm:px-6 py-2 sm:py-3 rounded-2xl border-2 border-red-500/80 shadow-2xl animate-fade-in max-w-[90vw]">
           <div className="flex items-center gap-2.5">
             <span
               className={`text-2xl ${playerHp <= 30 ? "animate-bounce text-red-500" : "animate-pulse"}`}
@@ -1869,8 +1928,9 @@ export const VoxelCanvas: React.FC<VoxelCanvasProps> = ({
       )}
 
       {/* Bottom Center Interactive Slice Button in Fighting Mode */}
+
       {gameMode === "fighting" && (
-        <div className="absolute bottom-20 sm:bottom-6 left-1/2 transform -translate-x-1/2 z-30 flex flex-col items-center gap-2 animate-fade-in">
+        <div className="absolute bottom-20 sm:bottom-6 right-2 sm:left-1/2 sm:-translate-x-1/2 z-30 flex flex-col items-center gap-2 animate-fade-in">
           <button
             onClick={sliceZombies}
             className={`px-8 py-3.5 rounded-2xl font-black text-base transition-all flex items-center gap-3 border-2 shadow-2xl ${
@@ -1880,7 +1940,12 @@ export const VoxelCanvas: React.FC<VoxelCanvasProps> = ({
             }`}
           >
             <span className="text-2xl">⚔️</span>
-            <div className="flex flex-col items-start">
+
+            {/* Mobile */}
+            <span className="sm:hidden tracking-wider">KILL</span>
+
+            {/* Desktop */}
+            <div className="hidden sm:flex flex-col items-start">
               <span className="tracking-wider">SLICE ZOMBIES</span>
               <span className="text-[10px] font-bold text-amber-200/90 tracking-normal uppercase">
                 Press [P] Key or Click Here
@@ -1901,7 +1966,9 @@ export const VoxelCanvas: React.FC<VoxelCanvasProps> = ({
           >
             <span className="text-sm">{tag.icon}</span>
             <span>{tag.label}</span>
-            <span className="bg-slate-950 text-amber-300 text-[9px] font-black px-1.5 py-0.2 rounded-full uppercase">Talk [E]</span>
+            <span className="bg-slate-950 hidden sm:inline text-amber-300 text-[9px] font-black px-1.5 py-0.2 rounded-full uppercase">
+              Talk [E]
+            </span>
           </div>
         ))}
 
@@ -1919,7 +1986,7 @@ export const VoxelCanvas: React.FC<VoxelCanvasProps> = ({
         ))}
 
       {/* Bottom-Left Real-time Context Action Guide Widget — hidden on mobile (D-pad is there) */}
-      <div className="absolute bottom-5 left-5 z-30 pointer-events-auto hidden sm:flex items-center gap-3 bg-slate-900/95 backdrop-blur-md p-3 rounded-2xl border-2 border-amber-500/80 shadow-2xl animate-fade-in max-w-xs sm:max-w-sm">
+      <div className="absolute bottom-15 left-1/2 -translate-x-1/2 z-30 pointer-events-auto hidden sm:flex items-center gap-3 bg-slate-900/95 backdrop-blur-md p-3 rounded-2xl border-2 border-amber-500/80 shadow-2xl animate-fade-in max-w-xs sm:max-w-sm">
         <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-2xl shadow-md border border-white shrink-0">
           {contextGuide.icon}
         </div>
@@ -1971,36 +2038,68 @@ export const VoxelCanvas: React.FC<VoxelCanvasProps> = ({
       {/* Mobile Virtual D-Pad */}
       {isTouchDevice && (
         <div
-          className="absolute bottom-4 left-2 z-40 select-none"
+          className="absolute bottom-15 left-2 z-40 select-none"
           style={{ touchAction: "none" }}
         >
           <div className="flex justify-center mb-1">
             <button
-              onTouchStart={(e) => { e.preventDefault(); keysPressedRef.current.add("w"); }}
-              onTouchEnd={(e) => { e.preventDefault(); keysPressedRef.current.delete("w"); }}
+              onTouchStart={(e) => {
+                e.preventDefault();
+                keysPressedRef.current.add("w");
+              }}
+              onTouchEnd={(e) => {
+                e.preventDefault();
+                keysPressedRef.current.delete("w");
+              }}
               onTouchCancel={() => keysPressedRef.current.delete("w")}
               className="w-12 h-12 rounded-xl bg-slate-800/90 border-2 border-slate-600 text-white text-lg font-black flex items-center justify-center active:bg-amber-500 active:border-amber-400 shadow-xl"
-            >▲</button>
+            >
+              ▲
+            </button>
           </div>
           <div className="flex gap-1 justify-center">
             <button
-              onTouchStart={(e) => { e.preventDefault(); keysPressedRef.current.add("a"); }}
-              onTouchEnd={(e) => { e.preventDefault(); keysPressedRef.current.delete("a"); }}
+              onTouchStart={(e) => {
+                e.preventDefault();
+                keysPressedRef.current.add("a");
+              }}
+              onTouchEnd={(e) => {
+                e.preventDefault();
+                keysPressedRef.current.delete("a");
+              }}
               onTouchCancel={() => keysPressedRef.current.delete("a")}
               className="w-12 h-12 rounded-xl bg-slate-800/90 border-2 border-slate-600 text-white text-lg font-black flex items-center justify-center active:bg-amber-500 active:border-amber-400 shadow-xl"
-            >◀</button>
+            >
+              ◀
+            </button>
             <button
-              onTouchStart={(e) => { e.preventDefault(); keysPressedRef.current.add("s"); }}
-              onTouchEnd={(e) => { e.preventDefault(); keysPressedRef.current.delete("s"); }}
+              onTouchStart={(e) => {
+                e.preventDefault();
+                keysPressedRef.current.add("s");
+              }}
+              onTouchEnd={(e) => {
+                e.preventDefault();
+                keysPressedRef.current.delete("s");
+              }}
               onTouchCancel={() => keysPressedRef.current.delete("s")}
               className="w-12 h-12 rounded-xl bg-slate-800/90 border-2 border-slate-600 text-white text-lg font-black flex items-center justify-center active:bg-amber-500 active:border-amber-400 shadow-xl"
-            >▼</button>
+            >
+              ▼
+            </button>
             <button
-              onTouchStart={(e) => { e.preventDefault(); keysPressedRef.current.add("d"); }}
-              onTouchEnd={(e) => { e.preventDefault(); keysPressedRef.current.delete("d"); }}
+              onTouchStart={(e) => {
+                e.preventDefault();
+                keysPressedRef.current.add("d");
+              }}
+              onTouchEnd={(e) => {
+                e.preventDefault();
+                keysPressedRef.current.delete("d");
+              }}
               onTouchCancel={() => keysPressedRef.current.delete("d")}
               className="w-12 h-12 rounded-xl bg-slate-800/90 border-2 border-slate-600 text-white text-lg font-black flex items-center justify-center active:bg-amber-500 active:border-amber-400 shadow-xl"
-            >▶</button>
+            >
+              ▶
+            </button>
           </div>
         </div>
       )}
@@ -2018,7 +2117,7 @@ export const VoxelCanvas: React.FC<VoxelCanvasProps> = ({
               const pX = playerGroupRef.current.position.x;
               const pZ = playerGroupRef.current.position.z;
               const nearbyNpc = npcsRef.current.find(
-                (n) => Math.sqrt((pX - n.x) ** 2 + (pZ - n.z) ** 2) <= 4.5
+                (n) => Math.sqrt((pX - n.x) ** 2 + (pZ - n.z) ** 2) <= 4.5,
               );
               if (nearbyNpc && onNpcClickRef.current) {
                 onNpcClickRef.current(nearbyNpc);
