@@ -30,30 +30,37 @@ export function HowToPlayPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4 md:gap-8">
               <h1 className="text-xl font-serif tracking-[0.18em] text-white sm:text-2xl">
-                <Link
-                  to="/"
-                  className=""
-                >
-                KINTARA</Link>
+                <Link to="/" className="">
+                  STABLEREALMS
+                </Link>
               </h1>
-            
 
               <nav className="hidden items-center gap-6 text-sm font-semibold text-white/95 md:flex">
-                <Link
-                  to="/how-to-play"
-                  className=""
-                >
+                <Link to="/how-to-play" className="">
                   How to Play
                 </Link>
-               
+                <Link
+                  to="/wallet"
+                  className="transition-colors hover:text-white"
+                >
+                  Wallet
+                </Link>
               </nav>
             </div>
 
             <div className="hidden items-center gap-4 md:flex">
-              <a href="#" className="text-white/90 hover:text-white" aria-label="Community">
+              <a
+                href="#"
+                className="text-white/90 hover:text-white"
+                aria-label="Community"
+              >
                 <MessageCircle size={16} />
               </a>
-              <a href="#" className="text-white/90 hover:text-white" aria-label="Announcements">
+              <a
+                href="#"
+                className="text-white/90 hover:text-white"
+                aria-label="Announcements"
+              >
                 <Send size={16} />
               </a>
               <Link
@@ -74,15 +81,15 @@ export function HowToPlayPage() {
           </div>
 
           {mobileMenuOpen && (
-            <div className="mt-4 space-y-3 rounded-xl border border-white/20 bg-sky-400/25 p-3 md:hidden">
+            <div className="mt-4 space-y-3 rounded-xl border border-white/20   p-3 md:hidden">
               <Link
                 to="/how-to-play"
-                className="block rounded-lg bg-white/10 px-2 py-2 text-sm font-semibold text-white"
+                className="block rounded-lg px-2 py-2 text-sm font-semibold text-white"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 How to Play
               </Link>
-             
+
               <Link
                 to="/wallet"
                 className="block rounded-lg px-2 py-2 text-sm font-semibold text-white/90 hover:bg-white/10"
@@ -126,7 +133,7 @@ export function HowToPlayPage() {
               PLAYER GUIDE
             </p>
             <h1 className="mt-1 text-3xl font-black tracking-[0.14em] text-white sm:text-5xl">
-              HOW TO PLAY KINTARA
+              HOW TO PLAY STABLEREALMS
             </h1>
             <p className="mt-4 max-w-3xl text-base font-semibold text-white/90 sm:text-2xl">
               A practical player guide from first spawn to combat mastery,
@@ -136,11 +143,21 @@ export function HowToPlayPage() {
 
           <section className="rounded-2xl border border-white/10 bg-black/35 p-4 backdrop-blur-xl">
             <div className="grid grid-cols-2 gap-2 text-center text-xs font-black uppercase text-white/85 sm:grid-cols-5 sm:gap-3">
-              <div className="rounded-xl border border-white/15 bg-black/40 p-2">🌲 Forests</div>
-              <div className="rounded-xl border border-white/15 bg-black/40 p-2">⛏️ Mines</div>
-              <div className="rounded-xl border border-white/15 bg-black/40 p-2">⚔️ Fight</div>
-              <div className="rounded-xl border border-white/15 bg-black/40 p-2">🧱 Build</div>
-              <div className="rounded-xl border border-white/15 bg-black/40 p-2">🎯 Tasks</div>
+              <div className="rounded-xl border border-white/15 bg-black/40 p-2">
+                🌲 Forests
+              </div>
+              <div className="rounded-xl border border-white/15 bg-black/40 p-2">
+                ⛏️ Mines
+              </div>
+              <div className="rounded-xl border border-white/15 bg-black/40 p-2">
+                ⚔️ Fight
+              </div>
+              <div className="rounded-xl border border-white/15 bg-black/40 p-2">
+                🧱 Build
+              </div>
+              <div className="rounded-xl border border-white/15 bg-black/40 p-2">
+                🎯 Tasks
+              </div>
             </div>
           </section>
 
@@ -152,9 +169,9 @@ export function HowToPlayPage() {
               START HERE: YOUR FIRST HOUR
             </h2>
             <p className="mt-3 text-lg font-semibold text-white/90">
-              1) Hit Play Now and let the world load fully. 2) Start in
-              Survival Mode and learn movement first (WASD / arrows). 3) Walk
-              to nearby landmarks and NPCs before taking fights.
+              1) Hit Play Now and let the world load fully. 2) Start in Survival
+              Mode and learn movement first (WASD / arrows). 3) Walk to nearby
+              landmarks and NPCs before taking fights.
             </p>
             <p className="mt-3 text-base font-semibold text-white/80">
               You do not need to rush combat. Early progress is faster when you
@@ -180,8 +197,8 @@ export function HowToPlayPage() {
               objectives, and stack safe EXP.
             </p>
             <p className="mt-3 text-base font-semibold text-white/80">
-              Controls that matter most here: left-click for mining/gathering,
-              E near NPCs to interact, right-click drag to pan camera, wheel to
+              Controls that matter most here: left-click for mining/gathering, E
+              near NPCs to interact, right-click drag to pan camera, wheel to
               zoom and scout around obstacles.
             </p>
           </section>
@@ -204,10 +221,18 @@ export function HowToPlayPage() {
               re-enter on your timing.
             </p>
             <div className="mt-4 grid gap-2 text-sm font-bold text-white/90 sm:grid-cols-2">
-              <div className="rounded-xl border border-white/15 bg-black/40 p-3">Zombie: +1 EXP</div>
-              <div className="rounded-xl border border-white/15 bg-black/40 p-3">Wolf: +2 EXP</div>
-              <div className="rounded-xl border border-white/15 bg-black/40 p-3">Goblin: +3 EXP</div>
-              <div className="rounded-xl border border-white/15 bg-black/40 p-3">Bear: +4 EXP</div>
+              <div className="rounded-xl border border-white/15 bg-black/40 p-3">
+                Zombie: +1 EXP
+              </div>
+              <div className="rounded-xl border border-white/15 bg-black/40 p-3">
+                Wolf: +2 EXP
+              </div>
+              <div className="rounded-xl border border-white/15 bg-black/40 p-3">
+                Goblin: +3 EXP
+              </div>
+              <div className="rounded-xl border border-white/15 bg-black/40 p-3">
+                Bear: +4 EXP
+              </div>
               <div className="rounded-xl border border-white/15 bg-black/40 p-3 sm:col-span-2">
                 Elite Boss: +5 EXP
               </div>
@@ -222,8 +247,8 @@ export function HowToPlayPage() {
               MINI TASKS & EXP
             </h2>
             <p className="mt-3 text-lg font-semibold text-white/90">
-              Mini tasks rotate while you play and usually reward +10 EXP.
-              They are the most consistent leveling source because they chain
+              Mini tasks rotate while you play and usually reward +10 EXP. They
+              are the most consistent leveling source because they chain
               naturally with movement and map discovery.
             </p>
             <p className="mt-3 text-base font-semibold text-white/80">
@@ -265,7 +290,8 @@ export function HowToPlayPage() {
             </p>
             <p className="mt-3 text-base font-semibold text-white/80">
               Higher-value nodes (like gold/crystal and treasure) are strong EXP
-              and gold spikes. Sweep low-risk areas first, then take deeper runs.
+              and gold spikes. Sweep low-risk areas first, then take deeper
+              runs.
             </p>
           </section>
 
@@ -295,10 +321,19 @@ export function HowToPlayPage() {
             </h2>
             <div className="mt-3 space-y-2 text-base font-semibold text-white/85">
               <p>1) Start every session in Survival to build safe momentum.</p>
-              <p>2) Keep mini tasks active at all times for constant EXP flow.</p>
-              <p>3) Use Fighting in controlled bursts; do not overstay low HP.</p>
-              <p>4) Camera rotate + zoom is free awareness. Use it constantly.</p>
-              <p>5) If movement feels blocked, pan and re-approach from a new angle.</p>
+              <p>
+                2) Keep mini tasks active at all times for constant EXP flow.
+              </p>
+              <p>
+                3) Use Fighting in controlled bursts; do not overstay low HP.
+              </p>
+              <p>
+                4) Camera rotate + zoom is free awareness. Use it constantly.
+              </p>
+              <p>
+                5) If movement feels blocked, pan and re-approach from a new
+                angle.
+              </p>
             </div>
           </section>
         </div>

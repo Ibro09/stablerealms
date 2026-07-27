@@ -12,23 +12,90 @@ import { HowToPlayPage } from "./pages/HowToPlayPage";
 import { WalletPage } from "./pages/WalletPage";
 import { readJsonSafe } from "./utils/http";
 
-const MINI_TASKS_POOL: Omit<MiniTask, 'completed'>[] = [
-  { id: 'location:village_pond', title: 'Find the Lily Pond', description: 'Walk to the quiet pond near the village.', icon: '🪷', rewardExp: 10 },
-  { id: 'location:fishing_lake', title: 'Visit Fishing Lake', description: 'Walk near the Fishing Lake shore.', icon: '🎣', rewardExp: 10 },
-  { id: 'location:cow_farm', title: 'Visit the Cow Farm', description: 'Walk into the Pastoral Cow Farm.', icon: '🐄', rewardExp: 10 },
-  { id: 'location:carnival_fair', title: 'Explore the Carnival', description: 'Walk over to the Carnival Fairground.', icon: '🎪', rewardExp: 10 },
-  { id: 'location:horse_stable', title: 'Find the Stables', description: 'Walk to the Horse Stables.', icon: '🐎', rewardExp: 10 },
-  { id: 'location:mine_entrance', title: 'Find the Old Mine', description: 'Walk to the Cavern Mine Entrance.', icon: '⛏️', rewardExp: 10 },
-  { id: 'npc:npc-elder', title: 'Meet the Village Elder', description: 'Talk to the Village Elder in town.', icon: '🧓', rewardExp: 10 },
-  { id: 'npc:npc-guard', title: 'Talk to Guard Marcus', description: 'Find Guard Marcus and say hello.', icon: '🛡️', rewardExp: 10 },
-  { id: 'npc:npc-finn', title: 'Talk to Finn', description: 'Chat with the Pond Keeper.', icon: '💬', rewardExp: 10 },
-  { id: 'npc:npc-merchant', title: 'Visit the Merchant', description: 'Talk to the Travelling Merchant.', icon: '🛒', rewardExp: 10 },
+const MINI_TASKS_POOL: Omit<MiniTask, "completed">[] = [
+  {
+    id: "location:village_pond",
+    title: "Find the Lily Pond",
+    description: "Walk to the quiet pond near the village.",
+    icon: "🪷",
+    rewardExp: 10,
+  },
+  {
+    id: "location:fishing_lake",
+    title: "Visit Fishing Lake",
+    description: "Walk near the Fishing Lake shore.",
+    icon: "🎣",
+    rewardExp: 10,
+  },
+  {
+    id: "location:cow_farm",
+    title: "Visit the Cow Farm",
+    description: "Walk into the Pastoral Cow Farm.",
+    icon: "🐄",
+    rewardExp: 10,
+  },
+  {
+    id: "location:carnival_fair",
+    title: "Explore the Carnival",
+    description: "Walk over to the Carnival Fairground.",
+    icon: "🎪",
+    rewardExp: 10,
+  },
+  {
+    id: "location:horse_stable",
+    title: "Find the Stables",
+    description: "Walk to the Horse Stables.",
+    icon: "🐎",
+    rewardExp: 10,
+  },
+  {
+    id: "location:mine_entrance",
+    title: "Find the Old Mine",
+    description: "Walk to the Cavern Mine Entrance.",
+    icon: "⛏️",
+    rewardExp: 10,
+  },
+  {
+    id: "npc:npc-elder",
+    title: "Meet the Village Elder",
+    description: "Talk to the Village Elder in town.",
+    icon: "🧓",
+    rewardExp: 10,
+  },
+  {
+    id: "npc:npc-guard",
+    title: "Talk to Guard Marcus",
+    description: "Find Guard Marcus and say hello.",
+    icon: "🛡️",
+    rewardExp: 10,
+  },
+  {
+    id: "npc:npc-finn",
+    title: "Talk to Finn",
+    description: "Chat with the Pond Keeper.",
+    icon: "💬",
+    rewardExp: 10,
+  },
+  {
+    id: "npc:npc-merchant",
+    title: "Visit the Merchant",
+    description: "Talk to the Travelling Merchant.",
+    icon: "🛒",
+    rewardExp: 10,
+  },
 ];
 
-const pickMiniTasks = (count: number, excludedIds: string[] = []): MiniTask[] => {
-  const choices = MINI_TASKS_POOL.filter((task) => !excludedIds.includes(task.id));
+const pickMiniTasks = (
+  count: number,
+  excludedIds: string[] = [],
+): MiniTask[] => {
+  const choices = MINI_TASKS_POOL.filter(
+    (task) => !excludedIds.includes(task.id),
+  );
   const shuffled = [...choices].sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, count).map((task) => ({ ...task, completed: false }));
+  return shuffled
+    .slice(0, count)
+    .map((task) => ({ ...task, completed: false }));
 };
 
 const MIN_PLAY_WIDTH = 768;
@@ -67,9 +134,7 @@ function GamePage() {
   const expSyncTimerRef = useRef<number | null>(null);
 
   // Mini Tasks (+10 XP) State
-  const [miniTasks, setMiniTasks] = useState<MiniTask[]>([
-    ...pickMiniTasks(3),
-  ]);
+  const [miniTasks, setMiniTasks] = useState<MiniTask[]>([...pickMiniTasks(3)]);
   const [miniTaskToast, setMiniTaskToast] = useState<string | null>(null);
 
   const completeMiniTask = (taskId: string) => {
@@ -80,7 +145,9 @@ function GamePage() {
     setPlayerExp((prev) => prev + task.rewardExp);
 
     // Show celebratory toast banner
-    setMiniTaskToast(`🎉 Mini Task Completed: ${task.title}! (+${task.rewardExp} XP)`);
+    setMiniTaskToast(
+      `🎉 Mini Task Completed: ${task.title}! (+${task.rewardExp} XP)`,
+    );
     setTimeout(() => setMiniTaskToast(null), 3500);
 
     // Replace completed task with a fresh random task from pool
@@ -90,14 +157,16 @@ function GamePage() {
     const [nextTaskTemplate] = pickMiniTasks(1, otherTaskIds);
 
     setMiniTasks((prev) =>
-      prev.map((t) => (t.id === taskId ? nextTaskTemplate : t))
+      prev.map((t) => (t.id === taskId ? nextTaskTemplate : t)),
     );
   };
 
   // Trigger helper for mini task completion requirement by type
   const checkMiniTaskTrigger = (targetType: string) => {
     setMiniTasks((prev) =>
-      prev.map((t) => (t.id === targetType && !t.completed ? { ...t, completed: true } : t))
+      prev.map((t) =>
+        t.id === targetType && !t.completed ? { ...t, completed: true } : t,
+      ),
     );
   };
 
@@ -123,7 +192,16 @@ function GamePage() {
     let itemIcon = "🪨";
     let itemName = "Resource";
 
-    if (["STONE", "COBBLESTONE", "COAL_ORE", "IRON_ORE", "GOLD_ORE", "CRYSTAL_ORE"].includes(type)) {
+    if (
+      [
+        "STONE",
+        "COBBLESTONE",
+        "COAL_ORE",
+        "IRON_ORE",
+        "GOLD_ORE",
+        "CRYSTAL_ORE",
+      ].includes(type)
+    ) {
       checkMiniTaskTrigger("mt-mine");
     }
 
@@ -302,7 +380,7 @@ function GamePage() {
             setIsStartingGame(true);
             if (!canPlayOnThisScreen) {
               window.alert(
-                "KINTARA can only be played on a tablet or laptop. Please use a larger screen.",
+                "STABLEREALMS can only be played on a tablet or laptop. Please use a larger screen.",
               );
               setIsStartingGame(false);
               return;
@@ -310,7 +388,9 @@ function GamePage() {
             const token = localStorage.getItem(AUTH_TOKEN_KEY);
             const walletAddress = localStorage.getItem(WALLET_ADDRESS_KEY);
             if (!token || !walletAddress) {
-              window.alert("Connect your wallet on the Wallet page before playing.");
+              window.alert(
+                "Connect your wallet on the Wallet page before playing.",
+              );
               setIsStartingGame(false);
               return;
             }
@@ -322,143 +402,150 @@ function GamePage() {
         />
       )}
 
-      {hasStarted && !isGameReady && <Hero onPlay={() => {}} isLoading={true} />}
+      {hasStarted && !isGameReady && (
+        <Hero onPlay={() => {}} isLoading={true} />
+      )}
 
       {hasStarted && (
-        <div className={isGameReady ? "contents" : "invisible pointer-events-none"}>
-      {/* Top Header Controls */}
-      <MMORPGHeader
-        stats={{
-          name: "Hero Fighter",
-          level: playerLevel,
-          exp: playerExp,
-          maxExp: 1000,
-          hp: playerHp,
-          maxHp: 100,
-          stamina: stamina,
-          maxStamina: 100,
-          gold: gold,
-          title: "Village Warrior",
-          headStyle: "guard",
-          outfitColor: "#1e293b",
-        }}
-        quests={[]}
-        timeOfDay={timeOfDay}
-        onToggleTimeOfDay={() =>
-          setTimeOfDay((prev) =>
-            prev === "day" ? "sunset" : prev === "sunset" ? "night" : "day",
-          )
-        }
-        onRotateCamera={() => setCameraAngle((prev) => (prev + 1) % 4)}
-        onZoomIn={() =>
-          setCameraZoom((prev) =>
-            Math.min(6.0, Number((prev + 0.25).toFixed(2))),
-          )
-        }
-        onZoomOut={() =>
-          setCameraZoom((prev) =>
-            Math.max(0.4, Number((prev - 0.25).toFixed(2))),
-          )
-        }
-        onOpenCustomizer={() => {}}
-        onOpenWagonScene={() => {}}
-      />
+        <div
+          className={isGameReady ? "contents" : "invisible pointer-events-none"}
+        >
+          {/* Top Header Controls */}
+          <MMORPGHeader
+            stats={{
+              name: "Hero Fighter",
+              level: playerLevel,
+              exp: playerExp,
+              maxExp: 1000,
+              hp: playerHp,
+              maxHp: 100,
+              stamina: stamina,
+              maxStamina: 100,
+              gold: gold,
+              title: "Village Warrior",
+              headStyle: "guard",
+              outfitColor: "#1e293b",
+            }}
+            quests={[]}
+            timeOfDay={timeOfDay}
+            onToggleTimeOfDay={() =>
+              setTimeOfDay((prev) =>
+                prev === "day" ? "sunset" : prev === "sunset" ? "night" : "day",
+              )
+            }
+            onRotateCamera={() => setCameraAngle((prev) => (prev + 1) % 4)}
+            onZoomIn={() =>
+              setCameraZoom((prev) =>
+                Math.min(6.0, Number((prev + 0.25).toFixed(2))),
+              )
+            }
+            onZoomOut={() =>
+              setCameraZoom((prev) =>
+                Math.max(0.4, Number((prev - 0.25).toFixed(2))),
+              )
+            }
+            onOpenCustomizer={() => {}}
+            onOpenWagonScene={() => {}}
+          />
 
-      {/* Three.js Isometric Voxel Canvas */}
-      <VoxelCanvas
-        world={world}
-        onBlockMine={handleBlockMine}
-        onBlockPlace={handleBlockPlace}
-        onNpcClick={(npc) => {
-          setActiveNpcModal(npc);
-          checkMiniTaskTrigger(`npc:${npc.id}`);
-        }}
-        onInspectWagon={() => {}}
-        selectedItem={inventory[0] || null}
-        activeMode={activeMode}
-        npcs={INITIAL_NPCS}
-        timeOfDay={timeOfDay}
-        onAddChatMessage={() => {}}
-        cameraZoom={cameraZoom}
-        cameraAngle={cameraAngle}
-        onZoomChange={setCameraZoom}
-        gameMode={gameMode}
-        houseOwned={houseOwned}
-        onDiscoverLocation={(_, locationId) => {
-          if (locationId) checkMiniTaskTrigger(`location:${locationId}`);
-        }}
-        onReady={() => setIsGameReady(true)}
-        onCombatExpGain={(amount) => {
-          setPlayerExp((prev) => prev + amount);
-        }}
-      />
+          {/* Three.js Isometric Voxel Canvas */}
+          <VoxelCanvas
+            world={world}
+            onBlockMine={handleBlockMine}
+            onBlockPlace={handleBlockPlace}
+            onNpcClick={(npc) => {
+              setActiveNpcModal(npc);
+              checkMiniTaskTrigger(`npc:${npc.id}`);
+            }}
+            onInspectWagon={() => {}}
+            selectedItem={inventory[0] || null}
+            activeMode={activeMode}
+            npcs={INITIAL_NPCS}
+            timeOfDay={timeOfDay}
+            onAddChatMessage={() => {}}
+            cameraZoom={cameraZoom}
+            cameraAngle={cameraAngle}
+            onZoomChange={setCameraZoom}
+            gameMode={gameMode}
+            houseOwned={houseOwned}
+            onDiscoverLocation={(_, locationId) => {
+              if (locationId) checkMiniTaskTrigger(`location:${locationId}`);
+            }}
+            onReady={() => setIsGameReady(true)}
+            onCombatExpGain={(amount) => {
+              setPlayerExp((prev) => prev + amount);
+            }}
+          />
 
-      {/* Mini Tasks (+10 XP) Widget */}
-      <MiniTasksWidget tasks={miniTasks} onCompleteTask={completeMiniTask} />
+          {/* Mini Tasks (+10 XP) Widget */}
+          <MiniTasksWidget
+            tasks={miniTasks}
+            onCompleteTask={completeMiniTask}
+          />
 
-      {/* Mini Task Celebratory Toast */}
-      {miniTaskToast && (
-        <div className="absolute top-30 left-1/2 transform -translate-x-1/2 z-50 bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 text-slate-950 px-6 py-2.5 rounded-full border-2 border-white shadow-2xl font-black text-sm flex items-center gap-2 animate-bounce">
-          <span>{miniTaskToast}</span>
-        </div>
-      )}
+          {/* Mini Task Celebratory Toast */}
+          {miniTaskToast && (
+            <div className="absolute top-30 left-1/2 transform -translate-x-1/2 z-50 bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 text-slate-950 px-6 py-2.5 rounded-full border-2 border-white shadow-2xl font-black text-sm flex items-center gap-2 animate-bounce">
+              <span>{miniTaskToast}</span>
+            </div>
+          )}
 
-      {/* Top Left Bar: Title & Game Mode Toggle */}
-      <div className="absolute top-16 right-4 z-20 flex flex-wrap items-center gap-3 bg-slate-900/90 backdrop-blur-md px-4 py-2 rounded-2xl border-2 border-slate-700/80 shadow-xl">
-        <div className="flex items-center gap-2 pr-2 border-r border-slate-700/80">
-          <span className="text-xl">🌿</span>
-          <div>
-            <h1 className="text-xs font-black text-white tracking-wide">
-              Voxelverse RPG
-            </h1>
-            <p className="text-[10px] font-semibold text-amber-400">
-              WASD to walk & explore
-            </p>
+          {/* Top Left Bar: Title & Game Mode Toggle */}
+          <div className="absolute top-16 right-4 z-20 flex flex-wrap items-center gap-3 bg-slate-900/90 backdrop-blur-md px-4 py-2 rounded-2xl border-2 border-slate-700/80 shadow-xl">
+            <div className="flex items-center gap-2 pr-2 border-r border-slate-700/80">
+              <span className="text-xl">🌿</span>
+              <div>
+                <h1 className="text-xs font-black text-white tracking-wide">
+                  Voxelverse RPG
+                </h1>
+                <p className="text-[10px] font-semibold text-amber-400">
+                  WASD to walk & explore
+                </p>
+              </div>
+            </div>
+
+            {/* Game Mode Selector */}
+            <div className="flex items-center bg-slate-950 p-1 rounded-xl border border-slate-700 shadow-inner">
+              <button
+                onClick={() => setGameMode("survival")}
+                className={`px-3 py-1 rounded-lg font-black text-xs transition-all flex items-center gap-1 ${
+                  gameMode === "survival"
+                    ? "bg-emerald-500 text-slate-950 shadow-md"
+                    : "text-slate-300 hover:text-white hover:bg-slate-800"
+                }`}
+              >
+                <span>🌿</span> Survival
+              </button>
+              <button
+                onClick={() => setGameMode("fighting")}
+                className={`px-3 py-1 rounded-lg font-black text-xs transition-all flex items-center gap-1 ${
+                  gameMode === "fighting"
+                    ? "bg-red-600 text-white shadow-md animate-pulse"
+                    : "text-slate-300 hover:text-white hover:bg-slate-800"
+                }`}
+              >
+                <span>⚔️</span> Fighting
+              </button>
+            </div>
           </div>
-        </div>
 
-        {/* Game Mode Selector */}
-        <div className="flex items-center bg-slate-950 p-1 rounded-xl border border-slate-700 shadow-inner">
-          <button
-            onClick={() => setGameMode("survival")}
-            className={`px-3 py-1 rounded-lg font-black text-xs transition-all flex items-center gap-1 ${
-              gameMode === "survival"
-                ? "bg-emerald-500 text-slate-950 shadow-md"
-                : "text-slate-300 hover:text-white hover:bg-slate-800"
-            }`}
-          >
-            <span>🌿</span> Survival
-          </button>
-          <button
-            onClick={() => setGameMode("fighting")}
-            className={`px-3 py-1 rounded-lg font-black text-xs transition-all flex items-center gap-1 ${
-              gameMode === "fighting"
-                ? "bg-red-600 text-white shadow-md animate-pulse"
-                : "text-slate-300 hover:text-white hover:bg-slate-800"
-            }`}
-          >
-            <span>⚔️</span> Fighting
-          </button>
-        </div>
-      </div>
-
-      {/* Active Everyday Activity Modal */}
-      {activeNpcModal && (
-        <SurvivalActivityModal
-          npc={activeNpcModal}
-          onClose={() => setActiveNpcModal(null)}
-          gold={gold}
-          setGold={setGold}
-          houseOwned={houseOwned}
-          setHouseOwned={setHouseOwned}
-          inventory={inventory}
-          setInventory={setInventory}
-          playerHp={playerHp}
-          setPlayerHp={setPlayerHp}
-          stamina={stamina}
-          setStamina={setStamina}
-        />
-      )}
+          {/* Active Everyday Activity Modal */}
+          {activeNpcModal && (
+            <SurvivalActivityModal
+              npc={activeNpcModal}
+              onClose={() => setActiveNpcModal(null)}
+              gold={gold}
+              setGold={setGold}
+              houseOwned={houseOwned}
+              setHouseOwned={setHouseOwned}
+              inventory={inventory}
+              setInventory={setInventory}
+              playerHp={playerHp}
+              setPlayerHp={setPlayerHp}
+              stamina={stamina}
+              setStamina={setStamina}
+            />
+          )}
         </div>
       )}
     </div>

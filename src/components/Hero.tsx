@@ -27,7 +27,7 @@ export default function Hero({
         <div className="mx-auto flex w-[92%] max-w-7xl">
           <div className="max-w-xl md:max-w-2xl">
             <h1 className="font-serif text-4xl leading-none tracking-[0.24em] sm:text-5xl md:text-6xl">
-              KINTARA
+              STABLEREALMS
             </h1>
 
             <div className="my-5 h-px w-full bg-white/20 sm:my-6" />
@@ -38,8 +38,8 @@ export default function Hero({
             </p>
 
             <div className="mt-6 inline-flex max-w-xl rounded-2xl border border-amber-300/30 bg-black/35 px-4 py-3 text-sm text-amber-100/95 backdrop-blur-md sm:mt-8 sm:text-base">
-              Best experienced on a big screen. Small screens can browse
-              the website, but gameplay is locked.
+              Best experienced on a big screen. Small screens can browse the
+              website, but gameplay is locked.
             </div>
 
             {/* Buttons */}
