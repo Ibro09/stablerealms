@@ -484,7 +484,7 @@ function GamePage() {
           )}
 
           {/* Title & Game Mode Toggle */}
-          <div className="absolute top-14 sm:top-16 right-2 sm:right-4 z-20 flex items-center gap-2 sm:gap-3 bg-slate-900/90 backdrop-blur-md px-2 sm:px-4 py-1.5 sm:py-2 rounded-2xl border-2 border-slate-700/80 shadow-xl">
+          <div className="absolute top-20 sm:top-16 right-2 sm:right-4 z-20 flex items-center gap-2 sm:gap-3 bg-slate-900/90 backdrop-blur-md px-2 sm:px-4 py-1.5 sm:py-2 rounded-2xl border-2 border-slate-700/80 shadow-xl">
             <div className="hidden sm:flex items-center gap-2 pr-2 border-r border-slate-700/80">
               <span className="text-xl">🌿</span>
               <div>

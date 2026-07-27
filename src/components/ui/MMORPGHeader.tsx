@@ -62,13 +62,6 @@ export const MMORPGHeader: React.FC<MMORPGHeaderProps> = ({
             />
           </div>
 
-          <div className="w-full bg-slate-800 h-1.5 rounded-full mt-1 overflow-hidden border border-slate-700 relative">
-            <div
-              className="bg-gradient-to-r from-amber-400 to-yellow-300 h-full rounded-full transition-all duration-300"
-              style={{ width: `${expPercent}%` }}
-            />
-          </div>
-
           <div className="flex items-center justify-between text-[9px] sm:text-[10px] text-slate-300 font-bold mt-0.5">
             <span>EXP: {stats.exp}</span>
           </div>
@@ -77,12 +70,7 @@ export const MMORPGHeader: React.FC<MMORPGHeaderProps> = ({
 
       {/* Top Center: Camera Controls & Time of Day — hidden on mobile */}
       <div className="hidden sm:flex items-center gap-2 bg-slate-900/90 backdrop-blur-md p-2 rounded-2xl border-2 border-slate-700 shadow-xl pointer-events-auto">
-        <button
-          onClick={onRotateCamera}
-          className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-amber-300 rounded-xl text-xs font-black flex items-center gap-1 shadow-md border border-slate-600 transition-all hover:scale-105"
-        >
-          <span>🔄</span> Rotate View
-        </button>
+      
         <button
           onClick={onZoomIn}
           className="w-8 h-8 bg-slate-800 hover:bg-slate-700 text-amber-300 rounded-xl font-black text-sm flex items-center justify-center border border-slate-600 shadow-md"
